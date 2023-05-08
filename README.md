@@ -5,10 +5,12 @@ I have explained these flaws, why they are considered security risks, and provid
 
 You can find the repository for this project at https://github.com/phuongnttruong/Cyber-Security-Base-2023-Course-Project-I. To use the project, download and extract the project files and then run the following command in your preferred command prompt from the project's root folder:
 
-To start the server, execute the command '''python manage.py runserver'''. If the database is not functioning properly, you may need to run the following commands:
+To start the server, execute the command ```python manage.py runserver'```. If the database is not functioning properly, you may need to run the following commands:
 
-'''python manage.py makemigrations
-python manage.py migrate'''
+```
+python manage.py makemigrations
+python manage.py migrate
+```
 After the server is up and running, you can access the homepage by navigating to http://127.0.0.1:8000/ 
 
 To modify or add any database tables using the Django admin interface, visit http://127.0.0.1:8000/admin/.
