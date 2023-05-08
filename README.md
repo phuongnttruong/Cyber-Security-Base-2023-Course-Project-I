@@ -32,3 +32,20 @@ def find_topic(tid):
 	return None
   ```
 The tid parameter is passed to the execute method as a separate parameter, rather than being concatenated into the SQL query string. This makes it impossible for an attacker to inject malicious SQL code into the query.
+
+## Flaw 2: [A01:2021 – Broken Access Control](https://owasp.org/Top10/A01_2021-Broken_Access_Control/)
+### Flaw's Location:
+The find_topic function is using a raw SQL query to retrieve the topic from the database. However, the tid parameter is being inserted directly into the SQL query string without any validation or sanitization. This makes the function vulnerable to SQL injection attacks, where an attacker could craft a malicious tid parameter that would cause the SQL query to execute unintended SQL statements.
+
+To fix this flaw, the tid parameter should be validated and sanitized before being used in the SQL query. This can be done using parameterized queries, which allow the tid parameter to be passed separately from the SQL query string. 
+```
+def find_topic(tid):
+	query = "SELECT * FROM topics WHERE id = %s"
+	with connection.cursor() as cursor:
+		cursor.execute(query, [tid])
+		topic = cursor.fetchone()
+	if topic:
+		return topic
+	return None
+  ```
+The tid parameter is passed to the execute method as a separate parameter, rather than being concatenated into the SQL query string. This makes it impossible for an attacker to inject malicious SQL code into the query.
