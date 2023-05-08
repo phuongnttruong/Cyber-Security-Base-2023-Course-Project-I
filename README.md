@@ -14,3 +14,6 @@ python manage.py migrate
 After the server is up and running, you can access the homepage by navigating to http://127.0.0.1:8000/ 
 
 To modify or add any database tables using the Django admin interface, visit http://127.0.0.1:8000/admin/.
+Username: admin
+Password: admin
+## Flaw 1: [A03:2021 – Injection](https://owasp.org/Top10/A03_2021-Injection/)
