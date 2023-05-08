@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 
 from .models import questions
 
+#A03:2021 – Injection line 6-10
 def find_topic(tid):
 	for q in questions:
 		if q['id'] == tid:
