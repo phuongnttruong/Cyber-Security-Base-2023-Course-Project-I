@@ -56,5 +56,17 @@ def find_topic(tid):
   ```
 The tid parameter is passed to the execute method as a separate parameter, rather than being concatenated into the SQL query string. This makes it impossible for an attacker to inject malicious SQL code into the query.
 
+## Flaw 3: [A04:2021 – Insecure Design](https://owasp.org/Top10/A04_2021-Insecure_Design/)
+While Sensitive Data Exposure is not a specific vulnerability, it is ranked number 4 on the OWASP Top 10 list and is an important aspect of website security. This category emphasizes the importance of good design principles and thorough testing of internal logic and user interfaces. Failure to adequately test can result in insecure design and vulnerabilities.
 
+The flaw in this code is that it is potentially exposing sensitive information. The questions variable is being passed directly to the template context, which means that all questions are being sent to the client-side. This could potentially expose sensitive information to an attacker or malicious user, such as question answers or other data that should only be accessible to authorized users.
+
+To fix this flaw, we should only pass the necessary information to the template context. For example, we could create a new list of topics that only includes the necessary information such as topic name and ID. Then we can pass this new list to the template instead of the questions variable. This would reduce the amount of sensitive information being exposed to the client-side.
+
+To add tests to our project, we can simply add the necessary code to the existing tests.py file.
+```
+def topicsView(request):
+    questions = question.objects.all().values('id', 'topic', 'difficulty')
+    return render(request, 'pages/topics.html', {'questions': questions})
+```
 
