@@ -16,7 +16,25 @@ After the server is up and running, you can access the homepage by navigating to
 To modify or add any database tables using the Django admin interface, visit http://127.0.0.1:8000/admin/.
 Username: admin
 Password: admin
-## Flaw 1: [A03:2021 – Injection](https://owasp.org/Top10/A03_2021-Injection/)
+
+## Flaw 1: [A01:2021 – Broken Access Control](https://owasp.org/Top10/A01_2021-Broken_Access_Control/)
+### Flaw's Location:
+Broken access control is a serious vulnerability that is frequently encountered and needs to be addressed, particularly for websites that handle sensitive or personal information. I introduced this flaw in the code by allowing anyone to access the "finish" page regardless of whether they have completed the quiz or not.
+
+To fix this flaw, we need to ensure that the user has completed the quiz before rendering the "finish" page. One way to accomplish this is to add a check for ```request.session['level'] == -1``` before rendering the "finish" page. This will ensure that only users who have completed the quiz will be able to access the "finish" page. Following is the fixed code.
+```
+def finishView(request):
+	try:
+		if request.session['level'] == -1 and request.session['passed'] == 1:
+			request.session['passed'] = 0
+			return render(request, 'pages/finish.html')
+		else:
+			return redirect('/cheater/')
+	except:
+		return redirect('/cheater/')
+  ```
+  
+## Flaw 2: [A03:2021 – Injection](https://owasp.org/Top10/A03_2021-Injection/)
 ### Flaw's Location:
 the find_topic function is using a raw SQL query to retrieve the topic from the database. However, the tid parameter is being inserted directly into the SQL query string without any validation or sanitization. This makes the function vulnerable to SQL injection attacks, where an attacker could craft a malicious tid parameter that would cause the SQL query to execute unintended SQL statements.
 
@@ -33,19 +51,5 @@ def find_topic(tid):
   ```
 The tid parameter is passed to the execute method as a separate parameter, rather than being concatenated into the SQL query string. This makes it impossible for an attacker to inject malicious SQL code into the query.
 
-## Flaw 2: [A01:2021 – Broken Access Control](https://owasp.org/Top10/A01_2021-Broken_Access_Control/)
-### Flaw's Location:
-The find_topic function is using a raw SQL query to retrieve the topic from the database. However, the tid parameter is being inserted directly into the SQL query string without any validation or sanitization. This makes the function vulnerable to SQL injection attacks, where an attacker could craft a malicious tid parameter that would cause the SQL query to execute unintended SQL statements.
 
-To fix this flaw, the tid parameter should be validated and sanitized before being used in the SQL query. This can be done using parameterized queries, which allow the tid parameter to be passed separately from the SQL query string. 
-```
-def find_topic(tid):
-	query = "SELECT * FROM topics WHERE id = %s"
-	with connection.cursor() as cursor:
-		cursor.execute(query, [tid])
-		topic = cursor.fetchone()
-	if topic:
-		return topic
-	return None
-  ```
-The tid parameter is passed to the execute method as a separate parameter, rather than being concatenated into the SQL query string. This makes it impossible for an attacker to inject malicious SQL code into the query.
+
