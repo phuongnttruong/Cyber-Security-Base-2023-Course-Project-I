@@ -49,13 +49,11 @@ def incorrectView(request):
 	return render(request, 'pages/incorrect.html')
 
 
+#Flaw 1: A01:2021 – Broken Access Control from line 53 to 59
 def finishView(request):
 	try:
-		if request.session['passed'] == 1:
-			request.session['passed'] = 0
-			return render(request, 'pages/finish.html')
-		else:
-			return redirect('/cheater/')
+		request.session['passed'] = 0
+		return render(request, 'pages/finish.html')
 	except:
 		return redirect('/cheater/')
 	#return render(request, 'pages/finish.html')
