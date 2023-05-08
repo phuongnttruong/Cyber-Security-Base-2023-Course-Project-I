@@ -82,7 +82,7 @@ Based on the code from setting.py provided by template, there doesn't seem to be
 ### Flaw's Location:
 Cross-site request forgery is an attack in which an attacker can use an authenticated user's existing privileges (such as cookies or tokens) to make malicious requests and access private user data. Essentially, if a user is logged into a website, a malicious actor can use a variety of tactics, such as sending unsolicited emails or exploiting vulnerabilities on sites the user is likely to visit, to implant a malicious URL in an HTML image or link, or through an HTML form and JavaScript if the target site only accepts POST requests. Once executed, it can appear as though the user has voluntarily transferred funds to the attacker with no means of rectifying the situation other than contacting the bank directly and seeking assistance.
 
-To address these vulnerabilities, it is necessary to include {% csrf_token %} in each form within our application. Django automatically handles the rest, ensuring that the CSRF flaw is resolved and that the demo application is functional.
+To address these vulnerabilities, it is necessary to include ```{% csrf_token %}```in each form within our application. Django automatically handles the rest, ensuring that the CSRF flaw is resolved and that the demo application is functional.
 ```
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
