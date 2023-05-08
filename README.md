@@ -57,6 +57,7 @@ def find_topic(tid):
 The tid parameter is passed to the execute method as a separate parameter, rather than being concatenated into the SQL query string. This makes it impossible for an attacker to inject malicious SQL code into the query.
 
 ## Flaw 3: [A04:2021 – Insecure Design](https://owasp.org/Top10/A04_2021-Insecure_Design/)
+### Flaw's Location:
 While Sensitive Data Exposure is not a specific vulnerability, it is ranked number 4 on the OWASP Top 10 list and is an important aspect of website security. This category emphasizes the importance of good design principles and thorough testing of internal logic and user interfaces. Failure to adequately test can result in insecure design and vulnerabilities.
 
 The flaw in this code is that it is potentially exposing sensitive information. The questions variable is being passed directly to the template context, which means that all questions are being sent to the client-side. This could potentially expose sensitive information to an attacker or malicious user, such as question answers or other data that should only be accessible to authorized users.
@@ -70,3 +71,41 @@ def topicsView(request):
     return render(request, 'pages/topics.html', {'questions': questions})
 ```
 
+## Flaw 4: [A06:2021 – Vulnerable and Outdated Components](https://owasp.org/Top10/A06_2021-Vulnerable_and_Outdated_Components/)
+### Flaw's Location:
+
+Another potential flaw is the use of vulnerable and outdated components in the code. This exposes the application to security risks as new vulnerabilities are discovered. To mitigate this risk, developers should regularly audit the components they use and update them as necessary. Fortunately, frameworks like Django provide automatic security warnings to help with this.
+
+Based on the code from setting.py provided by template, there doesn't seem to be any major flaws or vulnerabilities. However, the version of Django used in this code (3.0.8) is not the latest version, and there may be security patches or updates that are not included in this version. It's always a good practice to keep software components up to date to ensure the latest security patches are applied. Additionally, there is a secret key used in this code, which is good for security purposes. However, this key is hard-coded into the code, which is not a recommended practice. It's better to store sensitive information like this in environment variables or a separate configuration file that is not included in version control.
+
+## Flaw 5: [Cross-site Request Forgery (CSRF)]((https://cybersecuritybase.mooc.fi/module-2.3/1-security)
+### Flaw's Location:
+Cross-site request forgery is an attack in which an attacker can use an authenticated user's existing privileges (such as cookies or tokens) to make malicious requests and access private user data. Essentially, if a user is logged into a website, a malicious actor can use a variety of tactics, such as sending unsolicited emails or exploiting vulnerabilities on sites the user is likely to visit, to implant a malicious URL in an HTML image or link, or through an HTML form and JavaScript if the target site only accepts POST requests. Once executed, it can appear as though the user has voluntarily transferred funds to the attacker with no means of rectifying the situation other than contacting the bank directly and seeking assistance.
+
+To address these vulnerabilities, it is necessary to include {% csrf_token %} in each form within our application. Django automatically handles the rest, ensuring that the CSRF flaw is resolved and that the demo application is functional.
+```
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>Who wants to be a millionaire?</title>
+        <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet"/>
+        <link rel="stylesheet" type="text/css" href="/static/css/style.css"/>
+    </head>
+    <body>
+
+        <p>{{question.question}}</p>
+
+        <p>Your answer:</p>
+
+        <form method="post">
+            {% csrf_token %}
+            <ol type="A">
+                {% for a in question.answers %}
+                <li>
+                <button type="submit" name="answer" value="{{forloop.counter0}}">{{a}}</button>
+                {% endfor %}
+            </ol>
+        </form>
+
+    </body>
+</html>
+```
