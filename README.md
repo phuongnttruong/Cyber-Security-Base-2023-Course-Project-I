@@ -31,3 +31,4 @@ def find_topic(tid):
 		return topic
 	return None
   ```
+The tid parameter is passed to the execute method as a separate parameter, rather than being concatenated into the SQL query string. This makes it impossible for an attacker to inject malicious SQL code into the query.
