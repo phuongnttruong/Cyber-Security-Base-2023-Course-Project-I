@@ -17,3 +17,17 @@ To modify or add any database tables using the Django admin interface, visit htt
 Username: admin
 Password: admin
 ## Flaw 1: [A03:2021 – Injection](https://owasp.org/Top10/A03_2021-Injection/)
+### Flaw's Location:
+the find_topic function is using a raw SQL query to retrieve the topic from the database. However, the tid parameter is being inserted directly into the SQL query string without any validation or sanitization. This makes the function vulnerable to SQL injection attacks, where an attacker could craft a malicious tid parameter that would cause the SQL query to execute unintended SQL statements.
+
+To fix this flaw, the tid parameter should be validated and sanitized before being used in the SQL query. This can be done using parameterized queries, which allow the tid parameter to be passed separately from the SQL query string. 
+```
+def find_topic(tid):
+	query = "SELECT * FROM topics WHERE id = %s"
+	with connection.cursor() as cursor:
+		cursor.execute(query, [tid])
+		topic = cursor.fetchone()
+	if topic:
+		return topic
+	return None
+  ```
