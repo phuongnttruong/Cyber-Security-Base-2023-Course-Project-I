@@ -84,6 +84,7 @@ Cross-site request forgery is an attack in which an attacker can use an authenti
 
 To address these vulnerabilities, it is necessary to include ```{% csrf_token %}```in each form within our application. Django automatically handles the rest, ensuring that the CSRF flaw is resolved and that the demo application is functional.
 ```
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <title>Who wants to be a millionaire?</title>
@@ -92,20 +93,20 @@ To address these vulnerabilities, it is necessary to include ```{% csrf_token %}
     </head>
     <body>
 
-        <p>{{question.question}}</p>
+        <h1>Awesome! You beat the game!</h1>
 
-        <p>Your answer:</p>
+        <p>Enter your credentials to enter a lottery for the winners!</p>
 
-        <form method="post">
-            {% csrf_token %}
-            <ol type="A">
-                {% for a in question.answers %}
-                <li>
-                <button type="submit" name="answer" value="{{forloop.counter0}}">{{a}}</button>
-                {% endfor %}
-            </ol>
+        <form action="/thanks/" method="POST">
+#<!--Flaw 5, Cross-site Request Forgery (CSRF), we need to put {% csrf_token %} to prevent it -->
+		{% csrf_token %} 	
+            <p>Name: <input type="text" name="name"/></p>
+            <p>Email: <input type="text" name="email"/></p>
+            <p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>
         </form>
 
+        <img src="/static/img/cat-hacker.jpg" width="25%"></img>
+        <p></p>
     </body>
 </html>
 ```
