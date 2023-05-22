@@ -55,7 +55,14 @@ The find_topic function is using a raw SQL query to retrieve the topic from the 
 
 To fix this flaw, the tid parameter should be validated and sanitized before being used in the SQL query. This can be done using parameterized queries, which allow the tid parameter to be passed separately from the SQL query string. 
 ```
-
+def find_topic(tid):
+    query = "SELECT * FROM topics WHERE id = %s"
+    with topicView.cursor() as cursor:
+        cursor.execute(query, (tid,))
+        topic = cursor.fetchone()
+    if topic:
+        return topic
+    return None
   ```
 The tid parameter is passed to the execute method as a separate parameter, rather than being concatenated into the SQL query string. This makes it impossible for an attacker to inject malicious SQL code into the query.
 
