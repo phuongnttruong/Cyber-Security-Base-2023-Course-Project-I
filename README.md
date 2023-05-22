@@ -64,7 +64,6 @@ The flaw in this code is that it is potentially exposing sensitive information. 
 
 To fix this flaw, we should only pass the necessary information to the template context. For example, we could create a new list of topics that only includes the necessary information such as topic name and ID. Then we can pass this new list to the template instead of the questions variable. This would reduce the amount of sensitive information being exposed to the client-side.
 
-To add tests to our project, we can simply add the necessary code to the existing tests.py file.
 ```
 def topicsView(request):
     questions = question.objects.all().values('id', 'topic', 'difficulty')
@@ -84,29 +83,23 @@ Cross-site request forgery is an attack in which an attacker can use an authenti
 
 To address these vulnerabilities, it is necessary to include ```{% csrf_token %}```in each form within our application. Django automatically handles the rest, ensuring that the CSRF flaw is resolved and that the demo application is functional.
 ```
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-        <title>Who wants to be a millionaire?</title>
-        <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet"/>
-        <link rel="stylesheet" type="text/css" href="/static/css/style.css"/>
-    </head>
-    <body>
+{% extends 'base/main.html' %}
+{% block content %}
 
-        <h1>Awesome! You beat the game!</h1>
+<div class="header-bar">
+    <a href="{% url 'tasks' %}">&#8592; Back</a>
+</div>
 
-        <p>Enter your credentials to enter a lottery for the winners!</p>
 
-        <form action="/thanks/" method="POST">
-#<!--Flaw 5, Cross-site Request Forgery (CSRF), we need to put {% csrf_token %} to prevent it -->
-		{% csrf_token %} 	
-            <p>Name: <input type="text" name="name"/></p>
-            <p>Email: <input type="text" name="email"/></p>
-            <p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>
-        </form>
+<div class="card-body">
+    <form method="POST" action="">
+        <!--Flaw 5, Cross-site Request Forgery (CSRF), we need to put {% csrf_token %} to prevent it -->
+        {% csrf_token %}
+        {{form.as_p}}
+        <input class="button" type="submit" value="Submit">
+    </form>
+</div>
 
-        <img src="/static/img/cat-hacker.jpg" width="25%"></img>
-        <p></p>
-    </body>
-</html>
+
+{% endblock content %}
 ```
