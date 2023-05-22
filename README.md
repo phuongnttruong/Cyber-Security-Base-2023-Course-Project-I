@@ -23,17 +23,27 @@ Password: admin
 ### Flaw's Location: https://github.com/phuongnttruong/Cyber-Security-Base-2023-Course-Project-I/blob/916f19b782f525c2451c42f39d699bffa09c3a3d/cyber%20security%20project/src/pages/views.py#L52
 Broken access control is a serious vulnerability that is frequently encountered and needs to be addressed, particularly for websites that handle sensitive or personal information. I introduced this flaw in the code by allowing anyone to access the "finish" page regardless of whether they have completed the quiz or not.
 
-To fix this flaw, we need to ensure that the user has completed the quiz before rendering the "finish" page. One way to accomplish this is to add a check for ```request.session['level'] == -1``` before rendering the "finish" page. This will ensure that only users who have completed the quiz will be able to access the "finish" page. Following is the fixed code.
+In this code, I introduce a query parameter passed in the URL. If the value of passed is set to 1 in the URL, it will bypass the access control check and grant access to the topic regardless of the user's authorization. This creates a broken access control vulnerability, as an attacker can manipulate the URL to access topics without the necessary privileges. To mitigate this vulnerability, proper access control checks should be implemented within the topicView function or in the surrounding code. This can involve checking the user's authentication status, role-based permissions, or any other authorization mechanism based on the application's requirements.
+
+In this modified code, the access control check is performed directly within the topicView function using request.user.is_authenticated. This checks if the user is authenticated or logged in. If the user is authenticated, the function proceeds to render the 'pages/topic.html' template. Otherwise, if the user is not authenticated, the function returns an HttpResponse with an error message indicating the need to log in for accessing the topic. It assumes that the authentication system is properly configured and user authentication is working as expected.
+### source: https://docs.djangoproject.com/en/4.2/topics/auth/default/
 ```
-def finishView(request):
-	try:
-		if request.session['level'] == -1 and request.session['passed'] == 1:
-			request.session['passed'] = 0
-			return render(request, 'pages/finish.html')
-		else:
-			return redirect('/cheater/')
-	except:
-		return redirect('/cheater/')
+from django.http import HttpResponse
+def topicView(request, tid):
+    if request.user.is_authenticated:
+        passed = request.GET.get('passed')
+        if passed == '1':
+            request.session['passed'] = 1
+        else:
+            request.session['passed'] = 0
+
+        request.session['topic'] = tid
+        print("SESSION TOPIC SET TO: ", tid)
+        topic = find_topic(tid)
+        return render(request, 'pages/topic.html', {'topic': topic})
+    else:
+        # Handle unauthorized access, such as redirecting to a login page or displaying an error message
+        return HttpResponse("Unauthorized access.")
   ```
   
 ## Flaw 2: [A03:2021 – Injection](https://owasp.org/Top10/A03_2021-Injection/)
@@ -45,14 +55,7 @@ The find_topic function is using a raw SQL query to retrieve the topic from the 
 
 To fix this flaw, the tid parameter should be validated and sanitized before being used in the SQL query. This can be done using parameterized queries, which allow the tid parameter to be passed separately from the SQL query string. 
 ```
-def find_topic(tid):
-	query = "SELECT * FROM topics WHERE id = %s"
-	with connection.cursor() as cursor:
-		cursor.execute(query, [tid])
-		topic = cursor.fetchone()
-	if topic:
-		return topic
-	return None
+
   ```
 The tid parameter is passed to the execute method as a separate parameter, rather than being concatenated into the SQL query string. This makes it impossible for an attacker to inject malicious SQL code into the query.
 
