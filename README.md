@@ -20,7 +20,7 @@ Username: admin
 Password: admin
 
 ## Flaw 1: [A01:2021 – Broken Access Control](https://owasp.org/Top10/A01_2021-Broken_Access_Control/)
-### Flaw's Location: https://github.com/phuongnttruong/Cyber-Security-Base-2023-Course-Project-I/blob/916f19b782f525c2451c42f39d699bffa09c3a3d/cyber%20security%20project/src/pages/views.py#L52
+### Flaw's Location: https://github.com/phuongnttruong/Cyber-Security-Base-2023-Course-Project-I/blob/c75cbbb81f330a03c93b5f18f34fd581356ebdde/cyber%20security%20project/src/pages/views.py#L73
 Broken access control is a serious vulnerability that is frequently encountered and needs to be addressed, particularly for websites that handle sensitive or personal information. I introduced this flaw in the code by allowing anyone to access the "finish" page regardless of whether they have completed the quiz or not.
 
 In this code, I introduce a query parameter passed in the URL. If the value of passed is set to 1 in the URL, it will bypass the access control check and grant access to the topic regardless of the user's authorization. This creates a broken access control vulnerability, as an attacker can manipulate the URL to access topics without the necessary privileges. To mitigate this vulnerability, proper access control checks should be implemented within the topicView function or in the surrounding code. This can involve checking the user's authentication status, role-based permissions, or any other authorization mechanism based on the application's requirements.
@@ -47,7 +47,7 @@ def topicView(request, tid):
   ```
   
 ## Flaw 2: [A03:2021 – Injection](https://owasp.org/Top10/A03_2021-Injection/)
-### Flaw's Location: https://github.com/phuongnttruong/Cyber-Security-Base-2023-Course-Project-I/blob/1b17f8e2bd2f18515834bd878dbb2918ff3df2b7/cyber%20security%20project/src/pages/views.py#L5
+### Flaw's Location: https://github.com/phuongnttruong/Cyber-Security-Base-2023-Course-Project-I/blob/c75cbbb81f330a03c93b5f18f34fd581356ebdde/cyber%20security%20project/src/pages/views.py#L5
 
 Injection vulnerabilities are one of the most prevalent vulnerabilities on the OWASP Top 10 list. Injection occurs when untrusted or attacker-controlled data is passed to an interpreter, leading to unexpected and malicious behavior. Although injection attacks can occur in various programming languages, they are frequently observed in database query languages such as SQL
 
@@ -83,7 +83,7 @@ Another potential flaw is the use of vulnerable and outdated components in the c
 Based on the code from setting.py provided by template, there doesn't seem to be any major flaws or vulnerabilities. However, the version of Django used in this code (3.0.8) is not the latest version, and there may be security patches or updates that are not included in this version. It's always a good practice to keep software components up to date to ensure the latest security patches are applied. Additionally, there is a secret key used in this code, which is good for security purposes. However, this key is hard-coded into the code, which is not a recommended practice. It's better to store sensitive information like this in environment variables or a separate configuration file that is not included in version control.
 
 ## Flaw 5: [Cross-site Request Forgery (CSRF)]((https://cybersecuritybase.mooc.fi/module-2.3/1-security)
-### Flaw's Location:https://github.com/phuongnttruong/Cyber-Security-Base-2023-Course-Project-I/blob/1b17f8e2bd2f18515834bd878dbb2918ff3df2b7/cyber%20security%20project/src/pages/templates/pages/question.html#L12
+### Flaw's Location: https://github.com/phuongnttruong/Cyber-Security-Base-2023-Course-Project-I/blob/119f1cd2bce5d332b7d47800bb0265d0d67fea81/cyber%20security%20project/src/pages/templates/pages/finish.html#L15
 Cross-site request forgery is an attack in which an attacker can use an authenticated user's existing privileges (such as cookies or tokens) to make malicious requests and access private user data. Essentially, if a user is logged into a website, a malicious actor can use a variety of tactics, such as sending unsolicited emails or exploiting vulnerabilities on sites the user is likely to visit, to implant a malicious URL in an HTML image or link. Once executed, it can appear as though the user has voluntarily transferred funds to the attacker with no means of rectifying the situation other than contacting the bank directly and seeking assistance.
 
 To address these vulnerabilities, it is necessary to include ```{% csrf_token %}```in each form within our application. Django automatically handles the rest, ensuring that the CSRF flaw is resolved and that the demo application is functional.
