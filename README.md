@@ -65,7 +65,7 @@ There is no test file in this app. To address the lack of tests, it is essential
 
 
 ## Flaw 4: [A06:2021 – Vulnerable and Outdated Components](https://owasp.org/Top10/A06_2021-Vulnerable_and_Outdated_Components/)
-### Flaw's Location: [def topicView(request, tid):](https://github.com/phuongnttruong/Cyber-Security-Base-2023-Course-Project-I/blob/1b17f8e2bd2f18515834bd878dbb2918ff3df2b7/cyber%20security%20project/src/pages/views.py#L73)
+### Flaw's Location: There is no specific flaw, this django version is not the latest version: There may be security patches or updates that are not included in this version
 
 Another potential flaw is the use of vulnerable and outdated components in the code. This exposes the application to security risks as new vulnerabilities are discovered. To mitigate this risk, developers should regularly audit the components they use and update them as necessary. Fortunately, frameworks like Django provide automatic security warnings to help with this.
 
