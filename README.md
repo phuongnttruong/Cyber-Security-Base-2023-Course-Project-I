@@ -61,6 +61,7 @@ The tid parameter is passed to the execute method as a separate parameter, rathe
 Insecure design refers to a variety of software vulnerabilities that arise from inadequate software architecture and design decisions. These vulnerabilities can manifest in different ways, such as systems being susceptible to automated bots, business logic flaws that may result in financial or privacy breaches, or authentication systems that prioritize convenience over security, allowing users to select weak passwords. In essence, insecure design encompasses inherent logical or systematic flaws within the design itself, rather than being a consequence of poor implementation. To mitigate insecure design, it is crucial to employ robust testing and adhere to sound design protocols. Django, for example, offers tools for creating automated tests, and developers can follow test-driven development (TDD) principles by crafting tests prior to developing functionality.
 
 There is no test file in this app. To address the lack of tests, it is essential to create a comprehensive suite of tests that encompass various scenarios and edge cases. Additionally, another flaw in the application is the ability for users to pick multiple anwser for a single question, potentially distorting the results. Identifying this issue could have been achieved through rigorous testing. To rectify it, a solution similar to the one create the file ```test.py``` for making sure that our function is working as intended
+### Source: https://docs.djangoproject.com/en/4.2/intro/tutorial05/
 
 
 
