@@ -46,10 +46,9 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    # flaw 5, disable csrf protextion, so  using @csrf_exempt to protech it
-    
-
-
+    # flaw 5, disable csrf protextion, so  using @csrf_protect to protect it or switch 
+    # django.middleware.csrf.CsrfViewMiddleware back on
+    #django.middleware.csrf.CsrfViewMiddleware
     #'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
