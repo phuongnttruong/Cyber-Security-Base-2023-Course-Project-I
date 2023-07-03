@@ -92,8 +92,8 @@ def incorrectView(request):
 
 #to fix flaw 5, we import csrf_protect to protect against cross-site request forgery
 '''
-from django.views.decorators.csrf import csrf_protect
-@csrf_protect
+from django.views.decorators.csrf import csrf_exempt
+@csrf_exempt
 '''
 
 def finishView(request):
@@ -129,10 +129,7 @@ def topicView(request, tid):
 '''
 def topicView(request, tid):
     passed = request.GET.get('passed')  # Retrieve the 'passed' parameter from the request
-    if passed == '1':
-        request.session['passed'] = 1
-    else:
-        request.session['passed'] = 0
+    request.session['passed'] = passed  # Set 'passed' session variable to the value of 'passed' parameter
 
     request.session['topic'] = tid
     print("SESSION TOPIC SET TO: ", tid)
