@@ -23,27 +23,24 @@ Password: admin
 ### Flaw's Location: https://github.com/phuongnttruong/Cyber-Security-Base-2023-Course-Project-I/blob/c75cbbb81f330a03c93b5f18f34fd581356ebdde/cyber%20security%20project/src/pages/views.py#L73
 Broken access control is a serious vulnerability that is frequently encountered and needs to be addressed, particularly for websites that handle sensitive or personal information. I introduced this flaw in the code by allowing anyone to access the "finish" page regardless of whether they have completed the quiz or not.
 
-In this code, I introduce a query parameter passed in the URL. If the value of passed is set to 1 in the URL, it will bypass the access control check and grant access to the topic regardless of the user's authorization. This creates a broken access control vulnerability, as an attacker can manipulate the URL to access topics without the necessary privileges. To mitigate this vulnerability, proper access control checks should be implemented within the topicView function or in the surrounding code. This can involve checking the user's authentication status, role-based permissions, or any other authorization mechanism based on the application's requirements.
+In this code, I introduce a query parameter passed in the URL. The 'passed' session variable will always be set to 1, regardless of the actual value of the 'passed' parameter. This could potentially allow unauthorized access to certain resources or functionalities that are intended to be restricted based on the value of 'passed'. This creates a broken access control vulnerability, as an attacker can manipulate the URL to access topics without the necessary privileges. To mitigate this vulnerability, proper access control checks should be implemented within the topicView function or in the surrounding code. This can involve checking the user's authentication status, role-based permissions, or any other authorization mechanism based on the application's requirements.
 
-In this modified code, the access control check is performed directly within the topicView function using request.user.is_authenticated. This checks if the user is authenticated or logged in. If the user is authenticated, the function proceeds to render the 'pages/topic.html' template. Otherwise, if the user is not authenticated, the function returns an HttpResponse with an error message indicating the need to log in for accessing the topic. It assumes that the authentication system is properly configured and user authentication is working as expected.
+To fix the broken access control flaw in the code, you should update the logic to properly handle the value of the 'passed' parameter and ensure that the 'passed' session variable is set based on that value. Here's an updated version of the code. the value of the 'passed' parameter is properly checked using an if-else condition. If the value is '1', the 'passed' session variable is set to 1, indicating that the access is allowed. Otherwise, if the value is not '1', the 'passed' session variable is set to 0, indicating that the access is denied.
+
+By including this check, you ensure that the 'passed' session variable is set correctly based on the value of the 'passed' parameter, and the access control mechanism is working as intended. 
 ### source: https://docs.djangoproject.com/en/4.2/topics/auth/default/
 ```
-from django.http import HttpResponse
 def topicView(request, tid):
-    if request.user.is_authenticated:
-        passed = request.GET.get('passed')
-        if passed == '1':
-            request.session['passed'] = 1
-        else:
-            request.session['passed'] = 0
-
-        request.session['topic'] = tid
-        print("SESSION TOPIC SET TO: ", tid)
-        topic = find_topic(tid)
-        return render(request, 'pages/topic.html', {'topic': topic})
+    passed = request.GET.get('passed')  # Retrieve the 'passed' parameter from the request
+    if passed == '1':
+        request.session['passed'] = 1
     else:
-        # Handle unauthorized access, such as redirecting to a login page or displaying an error message
-        return HttpResponse("Unauthorized access.")
+        request.session['passed'] = 0
+
+    request.session['topic'] = tid
+    print("SESSION TOPIC SET TO: ", tid)
+    topic = find_topic(tid)
+    return render(request, 'pages/topic.html', {'topic': topic})
   ```
   
 ## Flaw 2: [A03:2021 – Injection](https://owasp.org/Top10/A03_2021-Injection/)
@@ -51,7 +48,11 @@ def topicView(request, tid):
 
 Injection vulnerabilities are one of the most prevalent vulnerabilities on the OWASP Top 10 list. Injection occurs when untrusted or attacker-controlled data is passed to an interpreter, leading to unexpected and malicious behavior. Although injection attacks can occur in various programming languages, they are frequently observed in database query languages such as SQL
 
-The find_topic function is using a raw SQL query to retrieve the topic from the database. However, the tid parameter is being inserted directly into the SQL query string without any validation or sanitization. This makes the function vulnerable to SQL injection attacks, where an attacker could craft a malicious tid parameter that would cause the SQL query to execute unintended SQL statements.
+The find_topic function is using a raw SQL query to retrieve the topic from the database.the value of tid is directly concatenated into the SQL query without any sanitization or parameterization. This can potentially allow an attacker to manipulate the tid parameter and inject malicious SQL code. For example, if the attacker sets tid to "1; DROP TABLE questions;", it would result in the following query:
+```
+SELECT * FROM questions WHERE id = 1; DROP TABLE questions;
+  ```
+
 
 To fix this flaw, the tid parameter should be validated and sanitized before being used in the SQL query. This can be done using parameterized queries, which allow the tid parameter to be passed separately from the SQL query string. 
 ```
@@ -63,30 +64,59 @@ def find_topic(tid):
     if topic:
         return topic
     return None
-  ```
+```
 The tid parameter is passed to the execute method as a separate parameter, rather than being concatenated into the SQL query string. This makes it impossible for an attacker to inject malicious SQL code into the query.
 
 ## Flaw 3: [A04:2021 – Insecure Design](https://owasp.org/Top10/A04_2021-Insecure_Design/)
 ### Flaw's Location: https://github.com/phuongnttruong/Cyber-Security-Base-2023-Course-Project-I/blob/509611cedbbeffa71a6f5510cf18666b8f922a7c/cyber%20security%20project/src/pages/test.py#L1
-Insecure design refers to a variety of software vulnerabilities that arise from inadequate software architecture and design decisions. These vulnerabilities can manifest in different ways, such as systems being susceptible to automated bots, business logic flaws that may result in financial or privacy breaches, or authentication systems that prioritize convenience over security, allowing users to select weak passwords. In essence, insecure design encompasses inherent logical or systematic flaws within the design itself, rather than being a consequence of poor implementation. To mitigate insecure design, it is crucial to employ robust testing and adhere to sound design protocols. Django, for example, offers tools for creating automated tests, and developers can follow test-driven development (TDD) principles by crafting tests prior to developing functionality.
+Insecure design refers to a variety of software vulnerabilities that arise from inadequate software architecture and design decisions. These vulnerabilities can manifest in different ways, such as systems being susceptible to automated bots, business logic flaws that may result in financial or privacy breaches, or authentication systems that prioritize convenience over security, allowing users to select weak passwords. 
 
-There is no test file in this app. To address the lack of tests, it is essential to create a comprehensive suite of tests that encompass various scenarios and edge cases. Additionally, another flaw in the application is the ability for users to pick multiple anwser for a single question, potentially distorting the results. Identifying this issue could have been achieved through rigorous testing. To rectify it, a solution similar to the one create the file ```test.py``` for making sure that our function is working as intended
+The quizView() function retrieves user input from the request's GET parameters (level) and directly uses it to set the level session variable without proper validation or sanitization. This design flaw can potentially lead to security vulnerabilities or unexpected behavior if the user input is manipulated by an attacker.
+
+To fix the insecure design flaw in the quizView() function and address the potential security vulnerability, I validated and sanitize the user input before using it. 
+```
+def quizView(request, tid):
+    print("CURRENTLY ON TOPIC: ", request.session['topic'])
+    topic = find_topic(tid)
+
+    user_input = request.GET.get('level')
+    if user_input is not None and user_input.isdigit():
+        level = int(user_input)
+        if level >= 0 and level < len(topic['questions']):
+            request.session['level'] = level
+        else:
+            request.session['level'] = 0
+    else:
+        request.session['level'] = 0
+
+    request.session['passed'] = 0
+    return render(request, 'pages/question.html', {'topic': topic, 'question': topic['questions'][request.session['level']]})
+
+```
 ### Source: https://docs.djangoproject.com/en/4.2/intro/tutorial05/
 
 
 
-## Flaw 4: [A06:2021 – Vulnerable and Outdated Components](https://owasp.org/Top10/A06_2021-Vulnerable_and_Outdated_Components/)
+## Flaw 4: [A06:2021 – Vulnerable and Outdated Components](https://owasp.org/Top10/A09_2021-Security_Logging_and_Monitoring_Failures/)
 ### Flaw's Location: There is no specific flaw, this django version is not the latest version: There may be security patches or updates that are not included in this version
 
-Another potential flaw is the use of vulnerable and outdated components in the code. This exposes the application to security risks as new vulnerabilities are discovered. To mitigate this risk, developers should regularly audit the components they use and update them as necessary. Fortunately, frameworks like Django provide automatic security warnings to help with this.
+Security logging and monitoring moved up in the OWASP Top 10 rankings based on the community survey, rising from the tenth position in the OWASP Top 10 2017. Evaluating the effectiveness of logging and monitoring measures can be complex, often requiring interviews or inquiries about the detection of attacks during penetration testing.
 
-Based on the code from setting.py provided by template, there doesn't seem to be any major flaws or vulnerabilities. However, the version of Django used in this code (3.0.8) is not the latest version, and there may be security patches or updates that are not included in this version. It's always a good practice to keep software components up to date to ensure the latest security patches are applied. Additionally, there is a secret key used in this code, which is good for security purposes. However, this key is hard-coded into the code, which is not a recommended practice. It's better to store sensitive information like this in environment variables or a separate configuration file that is not included in version control.
+Based on the code from setting.py provided by template, the debug mode is enabled in the settings, which is inappropriate for production environments as it can expose sensitive information.
+
+To address these issues, the debug flag in settings.py should be modified to ```DEBUG = False```. This ensures that debug mode is disabled in production. Furthermore, it is necessary to implement proper logging for all transactions and appropriately catch and handle any potential errors. Since this task requires a comprehensive approach, specific fixes are not provided in the given code.
 
 ## Flaw 5: [Cross-site Request Forgery (CSRF)]((https://cybersecuritybase.mooc.fi/module-2.3/1-security)
 ### Flaw's Location: https://github.com/phuongnttruong/Cyber-Security-Base-2023-Course-Project-I/blob/119f1cd2bce5d332b7d47800bb0265d0d67fea81/cyber%20security%20project/src/pages/templates/pages/finish.html#L15
 Cross-site request forgery is an attack in which an attacker can use an authenticated user's existing privileges (such as cookies or tokens) to make malicious requests and access private user data. Essentially, if a user is logged into a website, a malicious actor can use a variety of tactics, such as sending unsolicited emails or exploiting vulnerabilities on sites the user is likely to visit, to implant a malicious URL in an HTML image or link. Once executed, it can appear as though the user has voluntarily transferred funds to the attacker with no means of rectifying the situation other than contacting the bank directly and seeking assistance.
 
 To address these vulnerabilities, it is necessary to include ```{% csrf_token %}```in each form within our application. Django automatically handles the rest, ensuring that the CSRF flaw is resolved and that the demo application is functional.
+to fix the flaw, we import csrf_protect to protect against cross-site request forgery
+```
+from django.views.decorators.csrf import csrf_protect
+@csrf_protect
+```
+and in finish.html page
 ```
 {% extends 'base/main.html' %}
 {% block content %}
