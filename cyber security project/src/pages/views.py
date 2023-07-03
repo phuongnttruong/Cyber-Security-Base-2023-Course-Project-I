@@ -113,7 +113,7 @@ def thanksView(request):
 	return render(request, 'pages/thanks.html')
 
 
-#flaw 1: line 74 to 81, the 'passed' session variable will always be set to 1, 
+#flaw 1: line 116 to 127, the 'passed' session variable will always be set to 1, 
 # regardless of the actual value of the 'passed' parameter. 
 # This could potentially allow unauthorized access to certain resources or functionalities 
 # that are intended to be restricted based on the value of 'passed'.

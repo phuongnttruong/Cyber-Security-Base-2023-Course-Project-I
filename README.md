@@ -20,7 +20,7 @@ Username: admin
 Password: admin
 
 ## Flaw 1: [A01:2021 – Broken Access Control](https://owasp.org/Top10/A01_2021-Broken_Access_Control/)
-### Flaw's Location: https://github.com/phuongnttruong/Cyber-Security-Base-2023-Course-Project-I/blob/c75cbbb81f330a03c93b5f18f34fd581356ebdde/cyber%20security%20project/src/pages/views.py#L73
+### Flaw's Location: #flaw 1: https://github.com/phuongnttruong/Cyber-Security-Base-2023-Course-Project-I/blob/fd7b6e8021f519bd0c473f9fec663ecefb5fb7b3/cyber%20security%20project/src/pages/views.py#L116
 Broken access control is a serious vulnerability that is frequently encountered and needs to be addressed, particularly for websites that handle sensitive or personal information. I introduced this flaw in the code by allowing anyone to access the "finish" page regardless of whether they have completed the quiz or not.
 
 In this code, I introduce a query parameter passed in the URL. The 'passed' session variable will always be set to 1, regardless of the actual value of the 'passed' parameter. This could potentially allow unauthorized access to certain resources or functionalities that are intended to be restricted based on the value of 'passed'. This creates a broken access control vulnerability, as an attacker can manipulate the URL to access topics without the necessary privileges. To mitigate this vulnerability, proper access control checks should be implemented within the topicView function or in the surrounding code. This can involve checking the user's authentication status, role-based permissions, or any other authorization mechanism based on the application's requirements.
@@ -44,7 +44,7 @@ def topicView(request, tid):
   ```
   
 ## Flaw 2: [A03:2021 – Injection](https://owasp.org/Top10/A03_2021-Injection/)
-### Flaw's Location: https://github.com/phuongnttruong/Cyber-Security-Base-2023-Course-Project-I/blob/c75cbbb81f330a03c93b5f18f34fd581356ebdde/cyber%20security%20project/src/pages/views.py#L5
+### Flaw's Location: https://github.com/phuongnttruong/Cyber-Security-Base-2023-Course-Project-I/blob/fd7b6e8021f519bd0c473f9fec663ecefb5fb7b3/cyber%20security%20project/src/pages/views.py#L7
 
 Injection vulnerabilities are one of the most prevalent vulnerabilities on the OWASP Top 10 list. Injection occurs when untrusted or attacker-controlled data is passed to an interpreter, leading to unexpected and malicious behavior. Although injection attacks can occur in various programming languages, they are frequently observed in database query languages such as SQL
 
@@ -68,7 +68,7 @@ def find_topic(tid):
 The tid parameter is passed to the execute method as a separate parameter, rather than being concatenated into the SQL query string. This makes it impossible for an attacker to inject malicious SQL code into the query.
 
 ## Flaw 3: [A04:2021 – Insecure Design](https://owasp.org/Top10/A04_2021-Insecure_Design/)
-### Flaw's Location: https://github.com/phuongnttruong/Cyber-Security-Base-2023-Course-Project-I/blob/509611cedbbeffa71a6f5510cf18666b8f922a7c/cyber%20security%20project/src/pages/test.py#L1
+### Flaw's Location: # flaw 3: https://github.com/phuongnttruong/Cyber-Security-Base-2023-Course-Project-I/blob/fd7b6e8021f519bd0c473f9fec663ecefb5fb7b3/cyber%20security%20project/src/pages/views.py#L33
 Insecure design refers to a variety of software vulnerabilities that arise from inadequate software architecture and design decisions. These vulnerabilities can manifest in different ways, such as systems being susceptible to automated bots, business logic flaws that may result in financial or privacy breaches, or authentication systems that prioritize convenience over security, allowing users to select weak passwords. 
 
 The quizView() function retrieves user input from the request's GET parameters (level) and directly uses it to set the level session variable without proper validation or sanitization. This design flaw can potentially lead to security vulnerabilities or unexpected behavior if the user input is manipulated by an attacker.
@@ -98,7 +98,7 @@ def quizView(request, tid):
 
 
 ## Flaw 4: [A06:2021 – Vulnerable and Outdated Components](https://owasp.org/Top10/A09_2021-Security_Logging_and_Monitoring_Failures/)
-### Flaw's Location: There is no specific flaw, this django version is not the latest version: There may be security patches or updates that are not included in this version
+### Flaw's Location: https://github.com/phuongnttruong/Cyber-Security-Base-2023-Course-Project-I/blob/fd7b6e8021f519bd0c473f9fec663ecefb5fb7b3/cyber%20security%20project/src/config/settings.py#L26
 
 Security logging and monitoring moved up in the OWASP Top 10 rankings based on the community survey, rising from the tenth position in the OWASP Top 10 2017. Evaluating the effectiveness of logging and monitoring measures can be complex, often requiring interviews or inquiries about the detection of attacks during penetration testing.
 
@@ -107,7 +107,8 @@ Based on the code from setting.py provided by template, the debug mode is enable
 To address these issues, the debug flag in settings.py should be modified to ```DEBUG = False```. This ensures that debug mode is disabled in production. Furthermore, it is necessary to implement proper logging for all transactions and appropriately catch and handle any potential errors. Since this task requires a comprehensive approach, specific fixes are not provided in the given code.
 
 ## Flaw 5: [Cross-site Request Forgery (CSRF)]((https://cybersecuritybase.mooc.fi/module-2.3/1-security)
-### Flaw's Location: https://github.com/phuongnttruong/Cyber-Security-Base-2023-Course-Project-I/blob/119f1cd2bce5d332b7d47800bb0265d0d67fea81/cyber%20security%20project/src/pages/templates/pages/finish.html#L15
+### Flaw's Location: https://github.com/phuongnttruong/Cyber-Security-Base-2023-Course-Project-I/blob/fd7b6e8021f519bd0c473f9fec663ecefb5fb7b3/cyber%20security%20project/src/pages/templates/pages/finish.html#L15
+### https://github.com/phuongnttruong/Cyber-Security-Base-2023-Course-Project-I/blob/fd7b6e8021f519bd0c473f9fec663ecefb5fb7b3/cyber%20security%20project/src/pages/views.py#L93
 Cross-site request forgery is an attack in which an attacker can use an authenticated user's existing privileges (such as cookies or tokens) to make malicious requests and access private user data. Essentially, if a user is logged into a website, a malicious actor can use a variety of tactics, such as sending unsolicited emails or exploiting vulnerabilities on sites the user is likely to visit, to implant a malicious URL in an HTML image or link. Once executed, it can appear as though the user has voluntarily transferred funds to the attacker with no means of rectifying the situation other than contacting the bank directly and seeking assistance.
 
 To address these vulnerabilities, it is necessary to include ```{% csrf_token %}```in each form within our application. Django automatically handles the rest, ensuring that the CSRF flaw is resolved and that the demo application is functional.
