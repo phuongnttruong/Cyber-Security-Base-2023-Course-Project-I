@@ -125,7 +125,7 @@ def topicView(request, tid):
     print("SESSION TOPIC SET TO: ", tid)
     topic = find_topic(tid)
     return render(request, 'pages/topic.html', {'topic': topic})
-#How to fix flaw 1, from line 89-99
+#How to fix flaw 1, from line 128-140
 '''
 def topicView(request, tid):
     passed = request.GET.get('passed')  # Retrieve the 'passed' parameter from the request
